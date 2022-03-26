@@ -1,0 +1,17 @@
+com\cao\dao\OrderSettingDao.class
+com\cao\service\CheckItemServiceImpl.class
+com\cao\dao\RoleDao.class
+com\cao\service\SetmealServiceImpl.class
+com\cao\service\OrderSettingServiceImpl.class
+com\cao\service\CheckGroupServiceImpl.class
+com\cao\service\ReportServiceImpl.class
+com\cao\service\OrderServiceImpl.class
+com\cao\service\UserServiceImpl.class
+com\cao\dao\SetmealDao.class
+com\cao\dao\CheckItemDao.class
+com\cao\dao\OrderDao.class
+com\cao\dao\PermissionDao.class
+com\cao\dao\MemberDao.class
+com\cao\dao\CheckGroupDao.class
+com\cao\service\MemberServiceImpl.class
+com\cao\dao\UserDao.class

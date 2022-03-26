@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cao.dao.CheckGroupDao">
+
+
+    <insert id="add" parameterType="com.cao.POJO.CheckGroup">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_checkgroup(code,name,sex,helpCode,remark,attention)
+            values
+      	(#{code},#{name},#{sex},#{helpCode},#{remark},#{attention})
+    </insert>
+    <insert id="addCheckGroupAndCheckItem" parameterType="map">
+        insert into t_checkgroup_checkitem values(#{checkGroup_id},#{checkitemId})
+    </insert>
+    <update id="updateCheckGroup" parameterType="com.cao.POJO.CheckGroup">
+        update t_checkgroup
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="deleteAssociation" parameterType="int">
+        delete from t_checkgroup_checkitem where  checkgroup_id=#{checkGroupId}
+    </delete>
+    <delete id="deleteById">
+        delete from t_checkgroup where id=#{id}
+    </delete>
+    <select id="selectByCondition" parameterType="string" resultType="com.cao.POJO.CheckGroup">
+        select * from t_checkgroup
+        <if test="value!=null and value.length>0">
+            where code = #{value} or name = #{value} or helpCode = #{value}
+        </if>
+    </select>
+    <select id="selectById" resultType="com.cao.POJO.CheckGroup" parameterType="int">
+        select * from t_checkgroup where id=#{id}
+    </select>
+    <select id="selectCheckItemIdsByCheckGroupId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </select>
+    <select id="findBelongCountById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select COUNT(*) from t_setmeal_checkgroup where checkgroup_id=#{id}
+    </select>
+    <select id="selectAll" resultType="com.cao.POJO.CheckGroup">
+        select * from t_checkgroup
+    </select>
+    <select id="findCheckGroupById" resultMap="findByIdResultMap" parameterType="int">
+        select * from t_checkgroup
+        where id in (select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id});
+    </select>
+
+    <resultMap id="findByIdResultMap" type="com.cao.POJO.CheckGroup">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <collection property="checkItems"
+                    javaType="ArrayList"
+                    ofType="com.cao.POJO.CheckItem"
+                    column="id"
+                    select="com.cao.dao.CheckItemDao.findCheckItemById">
+        </collection>
+    </resultMap>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cao.dao.SetmealDao">
+
+
+    <insert id="add" parameterType="com.cao.POJO.Setmeal">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_setmeal
+            values
+      	(null,#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+    <insert id="addSetmealAndCheckgroup" parameterType="map">
+        insert into t_setmeal_checkgroup values(#{setmeal_id},#{checkgroup_id})
+    </insert>
+    <update id="updateSetmeal" parameterType="com.cao.POJO.Setmeal">
+        update t_setmeal
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="img != null">
+                img = #{img},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="deleteAssociation" parameterType="int">
+        delete from t_setmeal_checkgroup where  setmeal_id=#{id}
+    </delete>
+    <delete id="deleteById">
+        delete from t_setmeal where id=#{id}
+    </delete>
+    <select id="selectPage" resultType="com.cao.POJO.Setmeal" parameterType="string">
+        select * from t_setmeal
+        <if test="queryString!=null and queryString.length>0">
+            where code=#{queryString} or name=#{queryString} or helpcode=#{queryString}
+        </if>
+    </select>
+    <select id="selectById" resultType="com.cao.POJO.Setmeal" parameterType="int">
+        select * from t_setmeal where id=#{id}
+    </select>
+    <select id="findCheckGroupIdsBySetMealId" resultType="java.lang.Integer" parameterType="int">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id}
+    </select>
+    <select id="getAllSetmeal" resultType="com.cao.POJO.Setmeal">
+        select * from t_setmeal
+    </select>
+    <select id="findById" resultMap="findByIdResultMap" parameterType="int">
+        select * from t_setmeal where id=#{id}
+    </select>
+    <select id="findSetmealCount" resultType="map">
+        SELECT s.`name`,COUNT(*) as value
+        FROM t_order o,t_setmeal s
+        WHERE o.`setmeal_id`=s.`id`
+        GROUP BY s.`name`
+    </select>
+
+    <resultMap id="findByIdResultMap" type="com.cao.POJO.Setmeal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <result column="img" property="img"/>
+        <collection property="checkGroups"
+                    javaType="ArrayList"
+                    ofType="com.cao.POJO.CheckGroup"
+                    column="id"
+                    select="com.cao.dao.CheckGroupDao.findCheckGroupById">
+        </collection>
+    </resultMap>
+</mapper>
